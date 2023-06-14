@@ -1,46 +1,48 @@
 <template>
   <div>
-    <template v-for="(item, i) in chatMessages">
-      <!-- User chat bubbles -->
-      <div
-        v-if="item.type === 'user'"
-        :key="`item-${i}`"
-        class="flex items-end mb-2 justify-end"
-      >
+    <div class="bg-white p-4 rounded-lg shadow-lg overflow-y-scroll h-[calc(100vh-154px)]">
+      <template v-for="(item, i) in chatMessages">
+        <!-- User chat bubbles -->
         <div
-          class="bg-purple-500 text-white p-2 rounded-tr-lg rounded-br-lg rounded-bl-lg w-max inline-block"
+          v-if="item.type === 'user'"
+          :key="`item-${i}`"
+          class="flex items-end mb-2 justify-end"
         >
-          {{ item.content }}
+          <div
+            class="bg-purple-500 text-white p-2 rounded-tr-lg rounded-br-lg rounded-bl-lg w-max inline-block"
+          >
+            {{ item.content }}
+          </div>
+          <img
+            class="w-8 h-8 rounded-full ml-2"
+            src="../assets/pfp.png"
+            alt="profile picture"
+          />
         </div>
-        <img
-          class="w-8 h-8 rounded-full ml-2"
-          src="../assets/pfp.png"
-          alt="profile picture"
-        />
-      </div>
 
-      <!-- AI Chat bubbles -->
-      <div
-        v-else
-        :key="`item-else-${i}`"
-        class="flex items-end mb-2"
-      >
-        <img
-          class="w-8 h-8 rounded-full mr-2"
-          src="../assets/denim_dan.png"
-          alt="AI profile picture"
-        />
+        <!-- AI Chat bubbles -->
         <div
-          class="bg-blue-500 text-white p-2 rounded-tl-lg rounded-bl-lg rounded-br-lg w-max inline-block"
+          v-else
+          :key="`item-else-${i}`"
+          class="flex items-end mb-2"
         >
-          <div v-html="item.content"></div>
+          <img
+            class="w-8 h-8 rounded-full mr-2"
+            src="../assets/denim_dan.png"
+            alt="AI profile picture"
+          />
+          <div
+            class="bg-blue-500 text-white p-2 rounded-tl-lg rounded-bl-lg rounded-br-lg w-max inline-block"
+          >
+            <div v-html="item.content"></div>
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
+    </div>
 
     <!-- User Input -->
-    <footer class="fixed bottom-0 w-full p-4">
-      <div class="flex items-center">
+    <div class="w-full pt-4">
+      <div class="flex items-center bg-white rounded-lg shadow-lg">
         <input
           type="text"
           class="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none"
@@ -55,7 +57,7 @@
           Send
         </button>
       </div>
-    </footer>
+    </div>
   </div>
 </template>
 

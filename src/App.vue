@@ -9,9 +9,7 @@
         </button>
       </header>
       <main class="mt-16 p-4">
-        <div class="bg-white p-4 rounded-lg shadow-lg overflow-y-scroll h-[calc(100vh-250px)]">
-          <router-view/>
-        </div>
+        <router-view/>
       </main>
     </div>
   </div>
