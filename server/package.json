@@ -7,8 +7,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "ingest": "node script/ingest-data.js",
-    "crawler": "node script/vue-document-crawler.js"
+    "ingest": "node scripts/ingest-data.js",
+    "crawler": "node scripts/vue-document-crawler.js"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,6 @@
 import Koa from "koa";
-import Router from "koa-router";
 import { koaBody } from "koa-body";
-import { chat } from "./chat.js";
+import router from "./routes/routes.js";
 
 const app = new Koa();
 
@@ -11,15 +10,6 @@ app.use(
   })
 );
 
-const router = new Router();
-router.post("/chat", async (ctx) => {
-  const data = await chat(ctx);
-
-  ctx.body = {
-    data,
-    state: 1,
-  };
-});
 app.use(router.routes());
 
 app.listen(8080, () => {
