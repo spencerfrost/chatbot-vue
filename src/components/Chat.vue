@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { fetchChat } from "../api/index";
+import axios from "axios";
 import * as marked from "marked";
 
 const newMessage = ref("");
@@ -81,12 +81,16 @@ async function sendMessage() {
   newMessage.value = "";
   chatMessages.value.push(message);
 
-  fetchChat(message.content, messageHistory).then(({ data }) => {
-    chatMessages.value.push({
-      type: "ai",
-      content: marked.marked(data.data.text),
-    });
-    messageHistory.push(message.content, data.data.text)
+  const { data } = await axios.post('/api/chat', {
+    message: message.content,
+    history: messageHistory,
+  });
+
+  
+  messageHistory.push(message.content, data.text)
+  chatMessages.value.push({
+    type: "ai",
+    content: marked.marked(data.text),
   });
 }
 </script>

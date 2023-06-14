@@ -32,44 +32,49 @@
 <script setup lang="ts">
     import { ref } from "vue";
     import axios from "axios";
-    
+
     const file = ref(null);
     const namespace = ref("");
     const url = ref("");
     const crawlNamespace = ref("");
-    
+
     function onFileChange(event) {
         file.value = event.target.files[0];
     }
-    
-    function uploadFile() {
-        if (!file.value) {
-            // Handle the case when file is null or undefined
-            console.error("No file selected.");
+
+    async function uploadFile() {
+        if (!file.value || !namespace.value) {
+            console.error("No file selected or namespace entered.");
             return;
         }
         const formData = new FormData();
-        formData.append("file", file.value); // Access the value of the 'file' Ref
-        formData.append("namespace", namespace.value); // Access the value of the 'namespace' Ref
+        formData.append("file", file.value);
+        formData.append("namespace", namespace.value);
 
-        axios.post("/api/ingest", formData, {
+        try {
+            await axios.post("/api/ingest", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
-        });
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
-  
-    function crawlUrl() {
-        if (!url.value) {
-            // Handle the case when file is null or undefined
-            console.error("No URL entered.");
+
+    async function crawlUrl() {
+        if (!url.value || !crawlNamespace.value) {
+            console.error("No URL entered or namespace entered.");
             return;
         }
 
-        axios.post("/api/crawl", {
-        url: url.value,
-        namespace: crawlNamespace.value,
-        });
+        try {
+            await axios.post("/api/crawl", {
+            url: url.value,
+            namespace: crawlNamespace.value,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     }
 </script>
-  

@@ -26,7 +26,7 @@ async function fetchDocsToMarkdown(link) {
   return turndownService.turndown($("main").html());
 }
 
-export async function crawlUrl(vueBaseURl, namespace) {
+export async function handleCrawl(vueBaseURl, namespace) {
   const docsLinks = await fetchAllDocsLink(vueBaseURl);
   let result = "";
   for (const link of docsLinks) {
