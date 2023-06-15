@@ -13,11 +13,11 @@
             <span class="ml-2">Upload</span>
           </router-link>
         </li>
-        <li>
+        <!-- <li>
           <router-link to="/store" class="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
             <span class="ml-2">Store</span>
           </router-link>
-        </li>
+        </li> -->
       </ul>
       <!-- An icon with position: absolute, bottom: 0  -->
       <div class="absolute bottom-0 my-6">
