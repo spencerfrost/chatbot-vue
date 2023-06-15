@@ -48,7 +48,7 @@ export async function initializePinecone() {
     {
       pineconeIndex,
       textKey: "text",
-      namespace: 'minecraft-120',
+      namespace: 'default',
     }
   );
 
