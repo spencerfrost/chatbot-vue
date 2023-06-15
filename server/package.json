@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
+    "dev": "nodemon --experimental-specifier-resolution=node --loader=dotenv/config index.mjs",
     "ingest": "node scripts/ingest-data.js",
     "crawler": "node scripts/vue-document-crawler.js"
   },
@@ -17,8 +17,8 @@
     "@koa/cors": "^4.0.0",
     "@pinecone-database/pinecone": "^0.0.14",
     "axios": "^1.4.0",
-    "cheerio": "1.0.0-rc.12",
     "dotenv": "^16.1.4",
+    "jsdom": "^22.1.0",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",
     "koa-logger": "^3.2.1",

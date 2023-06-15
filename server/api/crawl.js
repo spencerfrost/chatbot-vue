@@ -1,40 +1,83 @@
 import axios from "axios";
-import cheerio from "cheerio";
 import TurndownService from "turndown";
 import fs from "fs";
 import * as url from "url";
 import path from 'path';
+import { JSDOM } from "jsdom";
 import { addToVectorStore } from "../utils/vector-store.js";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-async function fetchAllDocsLink(vueBaseURl) {
-  const { data: vueHtml } = await axios(vueBaseURl + "/guide/introduction.html");
-  const $ = cheerio.load(vueHtml);
-  const links = [];
-  $(".group a").each(function () {
-    const url = $(this).attr("href");
-    links.push(vueBaseURl + url);
-  });
-  return links;
+async function fetchAllDocsLink(ctx) {
+  try {
+    const url = ctx.request.body.url;
+    const linkSelector = ctx.request.body.linkSelector;
+
+    const response = await axios.get(url);
+    const html = response.data;
+
+    const { document } = new JSDOM(html).window;
+    const links = Array.from(document.querySelectorAll(linkSelector))
+      .map((element) => new URL(element.getAttribute('href'), url).href);
+
+    return links;
+  } catch (error) {
+    console.error(`Error fetching all document links from ${url}:`, error);
+    return [];
+  }
 }
 
-async function fetchDocsToMarkdown(link) {
-  const { data: introductionHTML } = await axios(link);
-  const $ = cheerio.load(introductionHTML);
-  var turndownService = new TurndownService();
-  return turndownService.turndown($("main").html());
+async function convertDocsToMarkdown(ctx) {
+  try {
+    const link = ctx.request.body.url;
+    const targetElement = ctx.request.body.targetElement || 'main';
+
+    const response = await axios.get(link);
+    const html = response.data;
+
+    const { document } = new JSDOM(html).window;
+
+    const mainElement = document.querySelector(targetElement);
+    const turndownService = new TurndownService();
+    return turndownService.turndown(mainElement.innerHTML);
+  } catch (error) {
+    console.error(`Error converting document at ${link} to Markdown:`, error);
+    return '';
+  }
 }
 
-export async function handleCrawl(vueBaseURl, namespace) {
-  const docsLinks = await fetchAllDocsLink(vueBaseURl);
-  let result = "";
-  for (const link of docsLinks) {
-    const markdown = await fetchDocsToMarkdown(link);
-    result += markdown + "\r\n";
+export async function handleCrawl(ctx) {
+  const targetUrl = ctx.request.body.url;
+  const parseLinks = ctx.request.body.parseLinks;
+
+  let markdown = "";
+  if (parseLinks) {
+    const docsLinks = await fetchAllDocsLink(targetUrl);
+    for (const link of docsLinks) {
+      markdown += await convertDocsToMarkdown(ctx) + "\r\n";
+    }
+  } else {
+    markdown = await convertDocsToMarkdown(ctx);
   }
 
-  fs.writeFileSync(path.resolve(__dirname, `../source/${namespace}-document.md`), result)
+  try {
+    fs.writeFileSync(path.resolve(__dirname, `../source/temp-crawl-document.md`), markdown)
+  } catch (error) {
+    console.error(`Error writing to file:`, error);
+    ctx.status = 500;
+    ctx.body = { error: 'Error writing to file' };
+    return;
+  }
 
-  await addToVectorStore(path.resolve(__dirname, `../source/${namespace}-document.md`), namespace);
+  try {
+    await addToVectorStore(path.resolve(__dirname, `../source/temp-crawl-document.md`), 'default');
+  } catch (error) {
+    console.error(`Error adding to vector store:`, error);
+    ctx.status = 500;
+    ctx.body = { error: 'Error adding to vector store' };
+    return;
+  }
+
+  ctx.status = 200;
+  ctx.body = { message: 'Successfully crawled and added to vector store' };
 }
