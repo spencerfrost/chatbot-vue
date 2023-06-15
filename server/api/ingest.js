@@ -11,7 +11,7 @@ export async function handleIngest(ctx) {
   await fs.promises.copyFile(file.filepath, tempFilePath); // Change this line
 
   // Now pass the path to the temporary file to addToVectorStore
-  await addToVectorStore(tempFilePath, 'default');
+  await addToVectorStore(tempFilePath);
 
   // You can delete the temporary file after you're done with it, if you wish
   await fs.promises.unlink(tempFilePath);

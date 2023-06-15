@@ -8,76 +8,59 @@ import { addToVectorStore } from "../utils/vector-store.js";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
-async function fetchAllDocsLink(ctx) {
-  try {
-    const url = ctx.request.body.url;
-    const linkSelector = ctx.request.body.linkSelector;
-
-    const response = await axios.get(url);
-    const html = response.data;
-
-    const { document } = new JSDOM(html).window;
-    const links = Array.from(document.querySelectorAll(linkSelector))
-      .map((element) => new URL(element.getAttribute('href'), url).href);
-
-    return links;
-  } catch (error) {
-    console.error(`Error fetching all document links from ${url}:`, error);
-    return [];
-  }
+// Fetch all document links from a given URL
+async function fetchAllDocsLink(url, linkSelector) {
+  const { data: html } = await axios.get(url);
+  const { document } = new JSDOM(html).window;
+  const links = Array.from(document.querySelectorAll(linkSelector))
+    .map((element) => new URL(element.getAttribute('href'), url).href);
+  return links;
 }
 
-async function convertDocsToMarkdown(ctx) {
-  try {
-    const link = ctx.request.body.url;
-    const targetElement = ctx.request.body.targetElement || 'main';
-
-    const response = await axios.get(link);
-    const html = response.data;
-
-    const { document } = new JSDOM(html).window;
-
-    const mainElement = document.querySelector(targetElement);
-    const turndownService = new TurndownService();
-    return turndownService.turndown(mainElement.innerHTML);
-  } catch (error) {
-    console.error(`Error converting document at ${link} to Markdown:`, error);
-    return '';
-  }
+// Convert HTML content from a given URL to Markdown
+async function convertHtmlToMarkdown(url, targetElement = 'main') {
+  const response = await axios.get(url);
+  const html = response.data;
+  const { document } = new JSDOM(html).window;
+  const mainElement = document.querySelector(targetElement);
+  const turndownService = new TurndownService();
+  return turndownService.turndown(mainElement.innerHTML);
 }
 
+// Write content to a file
+async function writeToFile(filePath, content) {
+  fs.writeFileSync(filePath, content);
+}
+
+// Remove a file
+function removeFile(filePath) {
+  fs.unlinkSync(filePath);
+}
+
+// Main handler function for crawling
 export async function handleCrawl(ctx) {
-  const targetUrl = ctx.request.body.url;
-  const parseLinks = ctx.request.body.parseLinks;
+  const { url: targetUrl, parseLinks, linkSelector, targetElement } = ctx.request.body;
+  const filePath = path.resolve(__dirname, `../source/temp-crawl-document.md`);
 
   let markdown = "";
-  if (parseLinks) {
-    const docsLinks = await fetchAllDocsLink(targetUrl);
+  if (parseLinks === 'true') {
+    const docsLinks = await fetchAllDocsLink(targetUrl, linkSelector);
     for (const link of docsLinks) {
-      markdown += await convertDocsToMarkdown(ctx) + "\r\n";
+      markdown += await convertHtmlToMarkdown(link, targetElement) + "\r\n";
     }
   } else {
-    markdown = await convertDocsToMarkdown(ctx);
+    markdown = await convertHtmlToMarkdown(targetUrl, targetElement);
   }
 
   try {
-    fs.writeFileSync(path.resolve(__dirname, `../source/temp-crawl-document.md`), markdown)
+    writeToFile(filePath, markdown);
+    await addToVectorStore(filePath);
+    removeFile(filePath);
+    ctx.status = 200;
+    ctx.body = { message: 'Successfully crawled and added to vector store' };
   } catch (error) {
-    console.error(`Error writing to file:`, error);
+    console.error(`Error:`, error);
     ctx.status = 500;
-    ctx.body = { error: 'Error writing to file' };
-    return;
+    ctx.body = { error: 'Error occurred' };
   }
-
-  try {
-    await addToVectorStore(path.resolve(__dirname, `../source/temp-crawl-document.md`), 'default');
-  } catch (error) {
-    console.error(`Error adding to vector store:`, error);
-    ctx.status = 500;
-    ctx.body = { error: 'Error adding to vector store' };
-    return;
-  }
-
-  ctx.status = 200;
-  ctx.body = { message: 'Successfully crawled and added to vector store' };
 }

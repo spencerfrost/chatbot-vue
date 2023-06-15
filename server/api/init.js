@@ -22,45 +22,45 @@ If you don't know the answer, just say you don't know. DO NOT try to make up an 
 Question: {question}
 Helpful answer in markdown:`;
 
-const model = new OpenAI({
-  temperature: 0,
-  modelName: "gpt-3.5-turbo",
-  openAIApiKey: process.env.OPENAI_API_KEY
-});
-
 let chain, vectorStore;
 
-export async function initializePinecone() {
-  const pinecone = new PineconeClient();
-  await pinecone.init({
+// Function to initialize Pinecone client
+async function initPineconeClient() {
+  const client = new PineconeClient();
+  await client.init({
     apiKey: process.env.PINECONE_API_KEY,
-    environment: process.env.PINECONE_ENVIRONMENT,
+    environment: process.env.PINECONE_ENVIRONMENT
   });
+  return client.Index(process.env.PINECONE_INDEX);
+}
 
-  const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX);
-
-  const indexes = await pinecone.listIndexes();
-
-  vectorStore = await PineconeStore.fromExistingIndex(
-    new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY,
-    }),
-    {
-      pineconeIndex,
-      textKey: "text",
-      namespace: 'default',
-    }
+// Function to initialize Pinecone store
+async function initPineconeStore(pineconeIndex) {
+  return await PineconeStore.fromExistingIndex(
+    new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY }),
+    { pineconeIndex, textKey: "text", namespace: process.env.PINECONE_NAMESPACE }
   );
+}
 
-  chain = ConversationalRetrievalQAChain.fromLLM(
-    model,
-    vectorStore.asRetriever(),
-    {
-      qaTemplate: QA_PROMPT,
-      questionGeneratorTemplate: CONDENSE_PROMPT,
-      returnSourceDocuments: true,
-    }
-  );
+// Function to initialize Conversational Retrieval QA Chain
+function initQAChain(model, retriever) {
+  return ConversationalRetrievalQAChain.fromLLM(model, retriever, {
+    qaTemplate: QA_PROMPT,
+    questionGeneratorTemplate: CONDENSE_PROMPT,
+    returnSourceDocuments: true
+  });
+}
+
+// Function to initialize Pinecone and QA Chain
+export async function initializePinecone() {
+  const pineconeIndex = await initPineconeClient();
+  vectorStore = await initPineconeStore(pineconeIndex);
+  const model = new OpenAI({
+    temperature: 0,
+    modelName: "gpt-3.5-turbo",
+    openAIApiKey: process.env.OPENAI_API_KEY
+  });
+  chain = initQAChain(model, vectorStore.asRetriever());
 }
 
 export { chain };
