@@ -1,9 +1,8 @@
 <template>
-    <div class="border rounded-lg p-4 mb-4">
-        <h3 class="text-lg font-bold mb-2">File Upload</h3>
+    <div class="border rounded-lg p-4 mb-4 bg-white dark:bg-gray-800">
+        <h3 class="text-lg font-bold mb-2 text-gray-700 dark:text-gray-300">File Upload</h3>
         <div class="flex items-center mb-4">
             <input id="fileInput" type="file" @change="onFileChange($event)" class="mr-2" />
-            <!-- <input id="namespaceInput" type="text" v-model="namespace" placeholder="Enter namespace" class="mr-2 px-4 py-2 border border-gray-300 rounded" /> -->
         </div>
         <button
             @click="uploadFile"
@@ -13,17 +12,17 @@
             Upload
         </button>
     </div>
-    <div class="border rounded-lg p-4">
-        <h3 class="text-lg font-bold mb-2">URL Crawl</h3>
+    <div class="border rounded-lg p-4 bg-white dark:bg-gray-800">
+        <h3 class="text-lg font-bold mb-2 text-gray-700 dark:text-gray-300">URL Crawl</h3>
         <div class="flex items-center mb-4">
-            <input id="urlInput" type="text" v-model="url" placeholder="Enter URL" class="mr-2 px-4 py-2 border border-gray-300 rounded" />
-            <input id="targetInput" type="text" v-model="targetElement" placeholder="Target element" class="mr-2 px-4 py-2 border border-gray-300 rounded" />
+            <input id="urlInput" type="text" v-model="url" placeholder="Enter URL" class="mr-2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded" />
+            <input id="targetInput" type="text" v-model="targetElement" placeholder="Target element" class="mr-2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded" />
 
             <div class="flex items-center">
                 <input id="parseLinksCheckbox" type="checkbox" v-model="parseLinks" class="mr-2" />
-                <label for="parseLinksCheckbox">Parse Links</label>
+                <label for="parseLinksCheckbox" class="text-gray-700 dark:text-gray-300">Parse Links</label>
             </div>            
-            <input id="linkSelectorInput" type="text" v-model="linkSelector" placeholder="Enter namespace" class="mr-2 px-4 py-2 border border-gray-300 rounded" />
+            <input id="linkSelectorInput" type="text" v-model="linkSelector" placeholder="querySelector target for links" class="mr-2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded" />
         </div>
         <button
             @click="crawlUrl"
@@ -33,6 +32,20 @@
             Crawl
         </button>
     </div>
+    <div class="border rounded-lg p-4 bg-white dark:bg-gray-800">
+        <h3 class="text-lg font-bold mb-2 text-gray-700 dark:text-gray-300">Github Repo Loader</h3>
+        <div class="flex items-center mb-4">
+            <input id="repoInput" type="text" v-model="repo" placeholder="Repo" class="mr-2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded" />
+        </div>
+        <button
+            @click="loadGithubRepo()"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+            :disabled="!repo"
+        >
+            Load
+        </button>
+    </div>
+
 </template>
   
 <script setup lang="ts">
@@ -44,6 +57,8 @@
     const parseLinks = ref(false);
     const targetElement = ref("");
     const linkSelector = ref("");
+    const repo = ref("");
+    
 
     function onFileChange(event) {
         file.value = event.target.files[0];
@@ -82,6 +97,26 @@
 
         try {
             await axios.post("/api/crawl", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function loadGithubRepo() {
+        if (!repo.value) {
+            console.error("No repo entered.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("repo", repo.value);
+
+        try {
+            await axios.post("/api/github", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
