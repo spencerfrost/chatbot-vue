@@ -26,6 +26,12 @@ cd server && pnpm install
 
 3. Create a .env file to provide the required environment variables
 
+Create a .env file in the root foler of the project to configure the baseUrl of the app:
+
+```
+VITE_APP_API_URL=http://localhost:8080
+```
+
 Create a .env file *inside the server folder* and configure the following environment variables:
 
 ```
@@ -36,7 +42,10 @@ OPENAI_API_KEY=""
 PINECONE_API_KEY=""
 PINECONE_ENVIRONMENT=""
 PINECONE_INDEX=""
+GITHUB_ACCESS_TOKEN=""
 ```
+
+
 
 ## Usage
 
