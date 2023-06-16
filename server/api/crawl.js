@@ -39,7 +39,7 @@ function removeFile(filePath) {
 
 // Main handler function for crawling
 export async function handleCrawl(ctx) {
-  const { url: targetUrl, parseLinks, linkSelector, targetElement } = ctx.request.body;
+  const { url: targetUrl, parseLinks, linkSelector, targetElement, namespace } = ctx.request.body;
   const filePath = path.resolve(__dirname, `../source/temp-crawl-document.md`);
 
   let markdown = "";
@@ -54,7 +54,7 @@ export async function handleCrawl(ctx) {
 
   try {
     writeToFile(filePath, markdown);
-    await addToVectorStore(filePath);
+    await addToVectorStore(filePath, namespace);
     removeFile(filePath);
     ctx.status = 200;
     ctx.body = { message: 'Successfully crawled and added to vector store' };

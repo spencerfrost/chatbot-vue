@@ -18,7 +18,7 @@ export async function handleGithubRepoLoad(ctx) {
     const documents = await loader.load();
 
     // Add the documents to the vector store
-    await addDocumentsToVectorStore(documents);
+    await addDocumentsToVectorStore(documents, namespace);
 
     // Send a successful response with the documents
     ctx.body = {

@@ -24,22 +24,20 @@ async function splitDocuments(documents) {
 }
 
 // Function to add documents to vector store
-async function addDocumentsToVectorStore(documents) {
+export async function addDocumentsToVectorStore(documents, namespace) {
   const docs = await splitDocuments(documents);
   const embeddings = new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY });
   const pineconeIndex = await initPineconeClient();
   await PineconeStore.fromDocuments(docs, embeddings, { 
     pineconeIndex,
     textKey: "text",
-    namespace: process.env.PINECONE_NAMESPACE
+    namespace: namespace || 'default'
   });
 }
 
 // Function to load documents from file and add to vector store
-export async function addToVectorStore(filePath) {
+export async function addToVectorStore(filePath, namespace) {
   const loader = new UnstructuredLoader(filePath);
   const rawDocs = await loader.load();
-  await addDocumentsToVectorStore(rawDocs);
+  await addDocumentsToVectorStore(rawDocs, namespace);
 }
-
-export { addDocumentsToVectorStore };

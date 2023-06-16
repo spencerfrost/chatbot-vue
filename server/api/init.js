@@ -38,7 +38,7 @@ async function initPineconeClient() {
 async function initPineconeStore(pineconeIndex) {
   return await PineconeStore.fromExistingIndex(
     new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY }),
-    { pineconeIndex, textKey: "text", namespace: process.env.PINECONE_NAMESPACE }
+    { pineconeIndex, textKey: "text" }
   );
 }
 
