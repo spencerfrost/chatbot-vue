@@ -9,8 +9,8 @@
           </router-link>
         </li>
         <li>
-          <router-link to="/upload" class="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
-            <span class="ml-2">Upload</span>
+          <router-link to="/loaders" class="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
+            <span class="ml-2">Document Loaders</span>
           </router-link>
         </li>
         <!-- <li>

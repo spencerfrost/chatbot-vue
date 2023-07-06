@@ -25,6 +25,9 @@ async function splitDocuments(documents) {
 
 // Function to add documents to vector store
 export async function addDocumentsToVectorStore(documents, namespace) {
+  console.log("Adding documents to vector store...");
+  console.log("Documents: ", documents);
+  console.log("Namespace: ", namespace || 'default');
   const docs = await splitDocuments(documents);
   const embeddings = new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY });
   const pineconeIndex = await initPineconeClient();
@@ -37,6 +40,8 @@ export async function addDocumentsToVectorStore(documents, namespace) {
 
 // Function to load documents from file and add to vector store
 export async function addToVectorStore(filePath, namespace) {
+  console.log("Initializing loader...");
+  console.log("File path: ", filePath);
   const loader = new UnstructuredLoader(filePath);
   const rawDocs = await loader.load();
   await addDocumentsToVectorStore(rawDocs, namespace);

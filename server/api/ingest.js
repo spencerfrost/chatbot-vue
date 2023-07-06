@@ -9,7 +9,7 @@ export async function handleIngest(ctx) {
 
   // Save the uploaded file to a temporary location
   const tempFilePath = path.join(os.tmpdir(), file.originalFilename);
-  await fs.promises.copyFile(file.filepath, tempFilePath); // Change this line
+  await fs.promises.copyFile(file.filepath, tempFilePath);
 
   // Now pass the path to the temporary file to addToVectorStore
   await addToVectorStore(tempFilePath, namespace);
