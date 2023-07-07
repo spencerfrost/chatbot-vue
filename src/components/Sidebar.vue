@@ -13,6 +13,11 @@
             <span class="ml-2">Document Loaders</span>
           </router-link>
         </li>
+        <li>
+          <router-link to="/debug" class="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
+            <span class="ml-2">Debug</span>
+          </router-link>
+        </li>
         <!-- <li>
           <router-link to="/store" class="flex items-center text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200">
             <span class="ml-2">Store</span>
