@@ -3,6 +3,8 @@ import { ConversationalRetrievalQAChain } from "langchain/chains";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import { PineconeStore } from "langchain/vectorstores/pinecone";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { BufferMemory } from "langchain/memory"; 
+
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -42,9 +44,14 @@ async function initPineconeStore(pineconeIndex) {
 // Function to initialize Conversational Retrieval QA Chain
 function initQAChain(model, retriever) {
   return ConversationalRetrievalQAChain.fromLLM(model, retriever, {
-    qaTemplate,
-    questionGeneratorTemplate,
-    returnSourceDocuments: true
+    // qaTemplate,
+    // questionGeneratorTemplate,
+    returnSourceDocuments: true,
+    memory: new BufferMemory({
+      memoryKey: "chat_history", // Must be set to "chat_history"
+      inputKey: "question", // The key for the input to the chain
+      outputKey: "text", // The key for the final conversational output of the chain
+    }),
   });
 }
 
@@ -52,12 +59,14 @@ function initQAChain(model, retriever) {
 export async function initializePinecone() {
   const pineconeIndex = await initPineconeClient();
   vectorStore = await initPineconeStore(pineconeIndex);
+  vectorStore.namespace = "default";
   const model = new OpenAI({
     temperature: 0,
     modelName: "gpt-3.5-turbo",
     openAIApiKey: process.env.OPENAI_API_KEY
   });
+
   chain = initQAChain(model, vectorStore.asRetriever());
 }
 
-export { chain };
+export { chain, vectorStore };
