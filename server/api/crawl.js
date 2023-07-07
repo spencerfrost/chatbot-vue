@@ -4,9 +4,16 @@ import fs from "fs";
 import * as url from "url";
 import path from 'path';
 import { JSDOM } from "jsdom";
-import { addToVectorStore } from "../utils/vector-store.js";
+import { addToVectorStore, addDocumentsToVectorStore } from "../utils/vector-store.js";
 import { PuppeteerWebBaseLoader } from "langchain/document_loaders/web/puppeteer";
 import { CheerioWebBaseLoader } from "langchain/document_loaders/web/cheerio";
+
+import { ApifyDatasetLoader } from "langchain/document_loaders/web/apify_dataset";
+import { Document } from "langchain/document";
+import { HNSWLib } from "langchain/vectorstores/hnswlib";
+import { OpenAIEmbeddings } from "langchain/embeddings/openai";
+import { RetrievalQAChain } from "langchain/chains";
+import { OpenAI } from "langchain/llms/openai";
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
@@ -60,39 +67,67 @@ async function getPageWithPuppeteer(url) {
   return docs;
 }
 
-
-// Write content to a file
 async function writeToFile(filePath, content) {
   fs.writeFileSync(filePath, content);
 }
 
-// Remove a file
 function removeFile(filePath) {
   fs.unlinkSync(filePath);
 }
 
 // Main handler function for crawling
 export async function handleCrawl(ctx) {
-  console.log('Handling crawl request')
+  console.log('Handling crawl request...')
   const { url: targetUrl, linkSelector, targetElement, namespace } = ctx.request.body;
-  const filePath = path.resolve(__dirname, `../source/temp-crawl-document.md`);
+  // const filePath = path.resolve(__dirname, `../source/temp-crawl-document.md`);
 
-  let markdown = "";
-  if (linkSelector.length > 0) {
-    const docsLinks = await fetchAllDocsLink(targetUrl, linkSelector);
+  // let markdown = "";
+  // if (linkSelector.length > 0) {
+  //   const docsLinks = await fetchAllDocsLink(targetUrl, linkSelector);
 
-    for (const link of docsLinks) {
-      markdown += await convertHtmlToMarkdown(link, targetElement) + "\r\n";
+  //   for (const link of docsLinks) {
+  //     markdown += await convertHtmlToMarkdown(link, targetElement) + "\r\n";
+  //   }
+  // } else {
+  //   // markdown = await fetchDocsToMarkdown(targetUrl);
+  //   markdown = await convertHtmlToMarkdown(targetUrl, targetElement);
+  //   console.log('markdown', markdown);
+  // }
+
+  const loader = await ApifyDatasetLoader.fromActorCall(
+    "apify/website-content-crawler",
+    {
+      startUrls: [{ url: targetUrl }],
+      excludeUrlGlobs: [
+        {
+            "glob": "https://eventconnect.zendesk.com/hc/en-us/sections/*"
+        },
+        {
+            "glob": "https://eventconnect.zendesk.com/hc/en-us/requests/*"
+        },
+        {
+            "glob": "https://eventconnect.zendesk.com/hc/en-us/signin/*"
+        }
+    ],
+    },
+    {
+      datasetMappingFunction: (item) =>
+        new Document({
+          pageContent: (item.text || ""),
+          metadata: { source: item.url },
+        }),
+      clientOptions: {
+        token: process.env.APIFY_API_TOKEN
+      },
     }
-  } else {
-    // markdown = await fetchDocsToMarkdown(targetUrl);
-    markdown = await convertHtmlToMarkdown(targetUrl, targetElement);
-    console.log('markdown', markdown);
-  }
+  );
+  
+  const docs = await loader.load();
 
   try {
-    writeToFile(filePath, markdown);
-    await addToVectorStore(filePath, namespace);
+    await addDocumentsToVectorStore(docs);
+    // writeToFile(filePath, markdown);
+    // await addToVectorStore(filePath, namespace);
     // removeFile(filePath);
     ctx.status = 200;
     ctx.body = { message: 'Successfully crawled and added to vector store' };
