@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg overflow-y-scroll h-[calc(100vh-90px)]">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg overflow-y-scroll h-[calc(100vh-133px)]">
       <template v-for="(item, i) in chatMessages">
         <!-- User chat bubbles -->
         <div

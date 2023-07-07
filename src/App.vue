@@ -3,7 +3,7 @@
     <Sidebar/>
     <div class="w-full overflow-auto">
       <Header />
-      <main class=" p-4">
+      <main class="p-4">
         <router-view/>
       </main>
     </div>

@@ -2,7 +2,7 @@
     <select
         id="namespace"
         v-model="namespace"
-        class="ec-input w-full mt-3 "
+        class="ec-input mt-3"
         @change="updateNamespace($event)"
     >
         <!-- v-for namespaces for the options-->
