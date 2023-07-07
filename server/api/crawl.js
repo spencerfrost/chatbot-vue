@@ -35,7 +35,6 @@ async function convertHtmlToMarkdown(url, targetElement) {
     const { data: html } = await axios(url);
     const { document } = new JSDOM(html).window;
     const mainElement = document.querySelector(targetElement);
-    console.log('mainElement', mainElement);
     const turndownService = new TurndownService();
 
     return turndownService.turndown(mainElement.innerHTML);
