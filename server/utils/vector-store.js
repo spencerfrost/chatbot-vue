@@ -24,7 +24,7 @@ async function splitDocuments(documents) {
 }
 
 // Function to add documents to vector store
-export async function addDocumentsToVectorStore(documents, namespace) {
+export async function addDocumentsToVectorStore(documents) {
   console.log("Adding documents to vector store...");
   console.log("Documents: ", documents)
   const docs = await splitDocuments(documents);
@@ -35,17 +35,17 @@ export async function addDocumentsToVectorStore(documents, namespace) {
   await PineconeStore.fromDocuments(docs, embeddings, { 
     pineconeIndex,
     textKey: "text",
-    namespace: namespace || 'default'
+    namespace: process.env.PINECONE_NAMESPACE,
   });
 }
 
 // Function to load documents from file and add to vector store
-export async function addToVectorStore(filePath, namespace) {
+export async function addToVectorStore(filePath) {
   console.log("Initializing loader...");
   console.log("File path: ", filePath);
   const loader = new UnstructuredLoader(filePath, {
     apiKey: process.env.UNSTRUCTURED_API_KEY,
   });
   const rawDocs = await loader.load();
-  await addDocumentsToVectorStore(rawDocs, namespace);
+  await addDocumentsToVectorStore(rawDocs);
 }

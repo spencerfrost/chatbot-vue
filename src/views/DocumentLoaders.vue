@@ -2,7 +2,7 @@
     <div>
         <Tabs v-model="activeTab" />
         <div class="flex justify-center p-4">
-            <div class="container w-5/12 border rounded-lg text-center p-4 mt-8 bg-white dark:bg-gray-800">
+            <div class="container w-5/12 border rounded-lg text-center p-4 mt-8 bg-gray-800">
                 <FileUpload v-if="activeTab === 'fileUpload'" />
                 <UrlCrawl v-if="activeTab === 'urlCrawl'" />
                 <GithubRepo v-if="activeTab === 'githubRepoLoader'" />

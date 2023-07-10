@@ -42,17 +42,17 @@
 
     <!-- User Input -->
     <div class="w-full pt-4">
-      <div class="flex items-center bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+      <div class="flex items-center bg-gray-800 rounded-lg shadow-lg">
         <input
           type="text"
-          class="flex-grow p-2 border border-gray-300 dark:border-gray-600 rounded-l-lg focus:outline-none dark:bg-gray-700 dark:text-white"
+          class="flex-grow p-2 border border-gray-600 rounded-l-lg focus:outline-none bg-gray-700 text-white"
           placeholder="Ask a question..."
           v-model="newMessage"
           @keypress.enter="sendMessage"
         />
         <button
           @click="sendMessage"
-          class="bg-purple-500 dark:bg-purple-700 px-4 py-2 text-white font-bold rounded-r-lg"
+          class="bg-purple-700 px-4 py-2 text-white font-bold rounded-r-lg"
         >
           Send
         </button>

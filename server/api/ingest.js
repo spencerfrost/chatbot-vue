@@ -5,14 +5,13 @@ import fs from "fs";
 
 export async function handleIngest(ctx) {
   const file = ctx.request.files.file;
-  const namespace = ctx.request.body.namespace;
 
   // Save the uploaded file to a temporary location
   const tempFilePath = path.join(os.tmpdir(), file.originalFilename);
   await fs.promises.copyFile(file.filepath, tempFilePath);
 
   // Now pass the path to the temporary file to addToVectorStore
-  await addToVectorStore(tempFilePath, namespace);
+  await addToVectorStore(tempFilePath,);
 
   // You can delete the temporary file after you're done with it, if you wish
   await fs.promises.unlink(tempFilePath);

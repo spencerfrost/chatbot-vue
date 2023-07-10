@@ -5,11 +5,10 @@
             <span class="block sm:inline">This feature is still in development. It is not yet ready for use.</span>
         </div>
         
-        <h3 class="text-lg font-bold mb-2 text-gray-700 dark:text-gray-300">URL Crawl</h3>
+        <h3 class="text-lg font-bold mb-2 text-gray-300">URL Crawl</h3>
         <div class="flex flex-col align-items-center justify-content-center mb-8">
             <input id="urlInput" type="text" v-model="url" placeholder="Enter URL" class="ec-input my-2" />
             <input id="targetInput" type="text" v-model="targetElement" placeholder="Target element" class="ec-input my-2" />
-            <input id="namespaceInput" type="text" v-model="namespace" placeholder="Namespace" class="ec-input my-2" />
             <input id="linkSelectorInput" type="text" v-model="linkSelector" placeholder="Link element" class="ec-input my-2" />
         </div>
         <button
@@ -28,7 +27,6 @@ import axios from "axios";
 
 const url = ref("");
 const targetElement = ref("");
-const namespace = ref("");
 const linkSelector = ref("");
 
 async function crawlUrl() {
