@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+  <div class="flex h-screen bg-gray-900">
     <Sidebar/>
     <div class="w-full overflow-auto">
       <main class=" p-4">

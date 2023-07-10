@@ -2,27 +2,27 @@ import { GithubRepoLoader } from "langchain/document_loaders/web/github";
 import { addDocumentsToVectorStore } from "../utils/vector-store.js";
 
 export async function handleGithubRepoLoad(ctx) {
-  // Extract the repo URL from the request body
-  const repoUrl = ctx.request.body.repo;
-
-  // Create a new GithubRepoLoader with the repo URL and options
-  const loader = new GithubRepoLoader(repoUrl, {
-    branch: "main",
-    recursive: false,
-    unknown: "error",
-    accessToken: process.env.GITHUB_ACCESS_TOKEN,
-  });
-
+  const { url } = ctx.request.body;
+  
   try {
-    // Load the documents from the Github repo
-    const documents = await loader.load();
+    const loader = new GithubRepoLoader(url,
+      {
+        branch: "main",
+        recursive: false,
+        unknown: "warn",
+        ignorePaths: ["*.md"],
+        accessToken: process.env.GITHUB_ACCESS_TOKEN
+      }
+    );
+    const docs = await loader.load();
+    console.log({ docs });
 
     // Add the documents to the vector store
-    await addDocumentsToVectorStore(documents, namespace);
+    await addDocumentsToVectorStore(docs);
 
     // Send a successful response with the documents
     ctx.body = {
-      data: documents,
+      data: docs,
       state: 1,
     };
   } catch (error) {

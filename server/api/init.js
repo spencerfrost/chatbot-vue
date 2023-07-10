@@ -37,7 +37,7 @@ async function initPineconeClient() {
 async function initPineconeStore(pineconeIndex) {
   return await PineconeStore.fromExistingIndex(
     new OpenAIEmbeddings({ openAIApiKey: process.env.OPENAI_API_KEY }),
-    { pineconeIndex, textKey: "text" }
+    { pineconeIndex, textKey: "text", namespace: process.env.PINECONE_NAMESPACE }
   );
 }
 
@@ -59,7 +59,6 @@ function initQAChain(model, retriever) {
 export async function initializePinecone() {
   const pineconeIndex = await initPineconeClient();
   vectorStore = await initPineconeStore(pineconeIndex);
-  vectorStore.namespace = "default";
   const model = new OpenAI({
     temperature: 0,
     modelName: "gpt-3.5-turbo",
