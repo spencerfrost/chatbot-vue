@@ -5,15 +5,13 @@ export async function handleGithubRepoLoad(ctx) {
   const { url } = ctx.request.body;
   
   try {
-    const loader = new GithubRepoLoader(url,
-      {
-        branch: "main",
-        recursive: false,
-        unknown: "warn",
-        ignorePaths: ["*.md"],
-        accessToken: process.env.GITHUB_ACCESS_TOKEN
-      }
-    );
+    const loader = new GithubRepoLoader(url, {
+      branch: "main",
+      recursive: false,
+      unknown: "warn",
+      ignorePaths: ["*.md"],
+      accessToken: process.env.GITHUB_ACCESS_TOKEN
+    });
     const docs = await loader.load();
     console.log({ docs });
 
@@ -26,11 +24,10 @@ export async function handleGithubRepoLoad(ctx) {
       state: 1,
     };
   } catch (error) {
-    // Log the error and send an error response
     console.error(error);
     ctx.status = 500;
     ctx.body = {
-      error: 'Failed to load Github Repo',
+      error,
     };
   }
 }
