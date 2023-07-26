@@ -1,6 +1,6 @@
 # SpinnGPT
 
-SpinnGPT is an AI-powered conversational system designed to be an expert on specific, niche topics. Unlike traditional chatbots, this version allows you to train the chatbot on specialized topics, such as video games like ARK and 7 Days to Die, or the documentation of cutting-edge technologies that other chatbots might not be familiar with due to their knowledge cutoff.
+SpinnGPT is an AI-powered conversational system designed to be an expert on specific, niche topics. Unlike traditional chatbots, this version allows you to train the chatbot on specialized topics such as video games or the documentation of cutting-edge technologies that other chatbots might not be familiar with due to their knowledge cutoff.
 
 ## Key Features
 
