@@ -1,20 +1,18 @@
-# EventConnect AI Chatbot
+# SpinnGPT
 
-The EventConnect AI Chatbot is a conversational AI system designed to provide comprehensive assistance and information about the EventConnect app and company. It leverages a powerful language model and integrates with various knowledge bases, codebases, APIs, and databases to deliver accurate and helpful responses to user queries.
+SpinnGPT is an AI-powered conversational system designed to be an expert on specific, niche topics. Unlike traditional chatbots, this version allows you to train the chatbot on specialized topics, such as video games like ARK and 7 Days to Die, or the documentation of cutting-edge technologies that other chatbots might not be familiar with due to their knowledge cutoff.
 
-## (Planned) Features
+## Key Features
 
-- **Natural Language Understanding:** The chatbot utilizes advanced natural language processing techniques to understand user queries and provide contextually relevant answers.
-- **Knowledgebase Integration:** It is equipped with a vast knowledgebase that contains information about the EventConnect app and company, enabling it to provide detailed insights and explanations.
-- **Codebase Access:** The chatbot has access to the codebase of the EventConnect app, allowing it to retrieve code snippets, explanations, and provide technical assistance.
-- **API Integration:** It seamlessly integrates with the EventConnect API, enabling it to fetch real-time data, provide event-related information, and perform various tasks on behalf of the user.
-- **Database Connectivity:** The chatbot connects to the EventConnect database, allowing it to retrieve and present data from past events, attendee lists, schedules, and more.
-- **Contextual Conversations:** It can maintain context and carry on dynamic conversations, providing a human-like conversational experience to users.
+- **Niche Topic Expertise:** Train the chatbot on specific topics, such as ARK, 7 Days to Die, or any other niche subject matter. The chatbot will then access the relevant knowledgebase for that topic, enabling it to provide detailed insights and answers.
+- **Dynamic Conversations:** The chatbot excels in maintaining context during conversations, creating a seamless and human-like interaction for users.
+- **Natural Language Understanding:** It uses advanced natural language processing techniques to grasp user queries accurately and respond in context.
+- **Vector Database Namespace:** The chatbot leverages vector database namespaces to store and access knowledge specific to each trained topic, ensuring efficient information retrieval.
 
 ## Installation
 
-1. Clone the EventConnect AI Chatbot repository to your local machine.
-2. Install dependencies
+1. Clone the Expert Chatbot - Specialized Knowledge Edition repository to your local machine.
+2. Install dependencies:
 
 ```shell
 # Install web dependencies
@@ -26,7 +24,7 @@ cd server && pnpm install
 
 3. Create a .env file to provide the required environment variables
 
-Create a .env file in the root foler of the project to configure the baseUrl of the app:
+Create a .env file in the root folder of the project to configure the baseUrl of the app:
 
 ```
 VITE_APP_API_URL=http://localhost:8080
@@ -38,24 +36,22 @@ Create a .env file *inside the server folder* and configure the following enviro
 # OpenAI API key
 OPENAI_API_KEY=""
 
-# Pinecone vector database API key
-PINECONE_API_KEY=""
-PINECONE_ENVIRONMENT=""
-PINECONE_INDEX=""
-GITHUB_ACCESS_TOKEN=""
+# Vector database API key
+VECTOR_DB_API_KEY=""
+VECTOR_DB_NAMESPACE_ARK=""
+VECTOR_DB_NAMESPACE_7DTD=""
+VECTOR_DB_NAMESPACE_TECH=""
 ```
-
-
 
 ## Usage
 
-1. Start the web server
+1. Start the web server:
 
 ```shell
 pnpm dev
 ```
 
-2. Start the server
+2. Start the server:
 
 ```shell
 cd server && pnpm dev
@@ -63,24 +59,28 @@ cd server && pnpm dev
 
 ## Getting Started
 
-To interact with the EventConnect AI Chatbot, follow these steps:
+To interact with the Expert Chatbot - Specialized Knowledge Edition, follow these steps:
 
-1. Follow the above installation steps
-2. Launch the chatbot application and access it at `http://localhost:5173/`.
-3. Start interacting with the chatbot by asking questions, seeking assistance, or requesting information related to the EventConnect app and company.
+1. Follow the above installation steps.
+2. Train the chatbot on your desired topic using the appropriate vector database namespace. For example, if you want to train it on ARK, use the `VECTOR_DB_NAMESPACE_ARK`; for 7 Days to Die, use `VECTOR_DB_NAMESPACE_7DTD`, and so on.
+3. Launch the chatbot application and access it at `http://localhost:5173/`.
+4. Start interacting with the chatbot by asking questions or seeking assistance on the trained topic.
 
 ## Usage Examples
 
-- User: "What are the upcoming events organized by NSA in the next month?"
-  Chatbot: "Here are the upcoming events: [Event 1], [Event 2], [Event 3]."
+- User: "What are the crafting recipes for a metal pickaxe in ARK?"
+  Chatbot: "Let me fetch the crafting recipes for a metal pickaxe in ARK..."
+  _The chatbot retrieves information from the trained ARK topic and provides the required crafting recipes._
 
-- User: "What hotels do we have blocks for for XYZ Event?"
-  Chatbot: "Sure, let me fetch the attendee list for you..."
-  _The chatbot retrieves and presents the hotel block list for Event XYZ._
+- User: "Explain the horde night mechanics in 7 Days to Die."
+  Chatbot: "Sure, let me access my knowledge on horde night mechanics..."
+  _The chatbot uses its expertise in 7 Days to Die to provide a detailed explanation of the horde night mechanics._
 
 ## Next Steps
 
-The development of the EventConnect AI Chatbot is an ongoing process, with future enhancements planned, including:
+The development of the Expert Chatbot - Specialized Knowledge Edition is an ongoing process, with several exciting enhancements planned, including:
 
-- Utilize the GitHub Repo document reader to help it understand a codebase.
-- WIP
+- Expanding the range of niche topics that the chatbot can be trained on.
+- Improving the accuracy and efficiency of information retrieval from the vector database namespaces.
+- Incorporating user feedback to make the chatbot even more helpful and insightful for users.
+- Leveraging Langsmith to troubleshoot and debug during the development process.
